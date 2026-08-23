@@ -17,7 +17,7 @@ export function autocomplete(data: AutocompleteData, args: string[]): string[] {
   return []
 }
 
-export function main(ns: NS): void {
+export async function main(ns: NS): Promise<void> {
   const logger = new Logger(ns)
 
   const hostname = ns.args[0] || ns.getHostname()
@@ -36,10 +36,12 @@ export function main(ns: NS): void {
   const numPortsRequired = server.numOpenPortsRequired ?? 0
 
   if (numPortsRequired > 0) {
-    logger.terminal.warn(
-      `Cannot nuke ${hostname}: requires ${numPortsRequired} open ports`,
-    )
-    return
+    if (!server.sshPortOpen) {
+      ns.brutessh(hostname)
+    } else {
+      logger.terminal.error(`Cannot nuke ${hostname}: SSH port is not open.`)
+      return
+    }
   }
 
   const success = ns.nuke(hostname)
