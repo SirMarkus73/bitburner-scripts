@@ -36,11 +36,12 @@ export async function main(ns: NS): Promise<void> {
   const numPortsRequired = server.numOpenPortsRequired ?? 0
 
   if (numPortsRequired > 0) {
-    if (!server.sshPortOpen) {
+    if (!server.sshPortOpen && ns.fileExists("BruteSSH.exe")) {
       ns.brutessh(hostname)
-    } else {
-      logger.terminal.error(`Cannot nuke ${hostname}: SSH port is not open.`)
-      return
+    }
+
+    if (!server.ftpPortOpen && ns.fileExists("FTPCrack.exe")) {
+      ns.ftpcrack(hostname)
     }
   }
 
