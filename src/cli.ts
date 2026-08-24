@@ -59,7 +59,7 @@ function getCommand(args: ScriptArg[]): getCommandReturn {
     default: {
       return {
         filename: null,
-        nextAutocomplete: ["find-objectives", "nuke", "hack"],
+        nextAutocomplete: ["find-objectives", "nuke", "hack", "recurse"],
       }
     }
   }

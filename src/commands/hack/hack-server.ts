@@ -25,6 +25,13 @@ export async function main(ns: NS): Promise<void> {
 
   ensureValidHostname(ns, hostname)
 
+  const maxMoney = ns.getServerMaxMoney(hostname)
+
+  if (maxMoney === 0) {
+    logger.terminal.warn(`Server ${hostname} cannot be hacked (max money is 0)`)
+    return
+  }
+
   ns.scp("scripts/hack.js", hostname)
   const threads = getMaxThreads(ns, "scripts/hack.js", hostname)
 
@@ -33,7 +40,7 @@ export async function main(ns: NS): Promise<void> {
     return
   }
 
-  const pid = ns.exec(`scripts/hack.js`, hostname, { threads }, threads)
+  const pid = ns.exec(`scripts/hack.js`, hostname, { threads: 1 }, 1)
 
   if (pid === 0) {
     logger.terminal.error(`Failed to start hack script on ${hostname}`)
