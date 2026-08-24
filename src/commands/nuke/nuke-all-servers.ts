@@ -1,5 +1,5 @@
 import type { NS } from "@ns"
-import { ensureValidHostname } from "./utils/ensure-valid-hostname"
+import { ensureValidHostname } from "utils/ensure-valid-hostname"
 
 async function scanAndNukeChildServers(
   ns: NS,
@@ -12,12 +12,13 @@ async function scanAndNukeChildServers(
       continue
     }
 
-    ns.run("nuke-server.js", 1, childServer)
-    while (ns.scriptRunning("nuke-server.js", childServer)) {
+    // Prevent stack overflow by waiting for the nuke script to finish before recursing
+    ns.run("commands/nuke/nuke-server.js", 1, childServer)
+    while (ns.scriptRunning("commands/nuke/nuke-server.js", childServer)) {
       await ns.sleep(100)
     }
 
-    ns.run("nuke-all-servers.js", 1, childServer)
+    ns.run("commands/nuke/nuke-all-servers.js", 1, childServer)
   }
 }
 

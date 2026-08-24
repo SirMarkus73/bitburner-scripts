@@ -87,6 +87,6 @@ export async function main(ns: NS) {
 
   const running = true
   while (running) {
-    await ns.asleep(10000)
+    await ns.asleep(1000)
   }
 }

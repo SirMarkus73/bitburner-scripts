@@ -1,5 +1,5 @@
 import type { NS } from "@ns"
-import { ensureValidHostname } from "./utils/ensure-valid-hostname"
+import { ensureValidHostname } from "utils/ensure-valid-hostname"
 
 export async function main(ns: NS): Promise<void> {
   const baseHostname = ns.args[0] || "home"
@@ -15,7 +15,7 @@ export async function main(ns: NS): Promise<void> {
       continue
     }
 
-    ns.run("hack-server.js", 1, childServer)
-    ns.run("hack-all-servers.js", 1, childServer)
+    ns.run("commands/hack/hack-server.js", 1, childServer)
+    ns.run("commands/hack/hack-all-servers.js", 1, childServer)
   }
 }

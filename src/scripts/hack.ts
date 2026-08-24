@@ -11,6 +11,7 @@ export async function main(ns: NS): Promise<void> {
     throw new Error(`Invalid number of threads: ${threads}`)
   }
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     while (currentMoney < maxMoney) {
       await ns.grow(undefined, { threads })

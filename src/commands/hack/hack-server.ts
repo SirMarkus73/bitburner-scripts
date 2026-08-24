@@ -1,7 +1,7 @@
 import type { AutocompleteData, NS } from "@ns"
-import { ensureValidHostname } from "./utils/ensure-valid-hostname"
-import { getMaxThreads } from "./utils/getMaxThreads"
-import { Logger } from "./utils/logger"
+import { ensureValidHostname } from "utils/ensure-valid-hostname"
+import { getMaxThreads } from "utils/getMaxThreads"
+import { Logger } from "utils/logger"
 
 export function autocomplete(data: AutocompleteData, args: string[]): string[] {
   if (args.length === 0) {
