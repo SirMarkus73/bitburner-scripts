@@ -13,7 +13,8 @@ function getCommand(args: ScriptArg[]): getCommandReturn {
     case "find-objectives": {
       return {
         filename: "commands/find-objectives.js",
-        nextAutocomplete: [],
+        args: [args[1] === "tree" ? "--tree" : ""],
+        nextAutocomplete: ["tree"],
       }
     }
     case "nuke": {

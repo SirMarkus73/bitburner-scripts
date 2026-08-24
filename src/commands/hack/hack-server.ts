@@ -25,10 +25,46 @@ export async function main(ns: NS): Promise<void> {
 
   ensureValidHostname(ns, hostname)
 
-  const maxMoney = ns.getServerMaxMoney(hostname)
+  const server = ns.getServer(hostname)
+
+  const maxMoney = server.moneyMax || 0
+  const canRunScripts = server.maxRam !== 0
 
   if (maxMoney === 0) {
     logger.terminal.warn(`Server ${hostname} cannot be hacked (max money is 0)`)
+    return
+  }
+
+  if (!canRunScripts) {
+    if (ns.isRunning("scripts/hack.js", "home", hostname)) {
+      logger.terminal.warn(
+        `Hack script is already running on home server for ${hostname}`,
+      )
+      return
+    }
+
+    logger.terminal.warn(
+      `Server ${hostname} cannot run scripts (max RAM is 0), using home server instead`,
+    )
+    const threads = Math.max(
+      Math.floor(getMaxThreads(ns, "scripts/hack.js", "home") / 3),
+      1,
+    )
+
+    const pid = ns.exec(`scripts/hack.js`, "home", { threads }, hostname)
+
+    if (pid === 0) {
+      logger.terminal.error(`Failed to start hack script on ${hostname}`)
+    }
+
+    logger.terminal.info(
+      `Started hack script on ${hostname} with PID ${pid} on home server`,
+    )
+    return
+  }
+
+  if (ns.isRunning("scripts/hack.js", hostname)) {
+    logger.terminal.warn(`Hack script is already running on ${hostname}`)
     return
   }
 
@@ -40,7 +76,7 @@ export async function main(ns: NS): Promise<void> {
     return
   }
 
-  const pid = ns.exec(`scripts/hack.js`, hostname, { threads: 1 }, 1)
+  const pid = ns.exec(`scripts/hack.js`, hostname, { threads })
 
   if (pid === 0) {
     logger.terminal.error(`Failed to start hack script on ${hostname}`)

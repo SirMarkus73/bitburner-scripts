@@ -2,34 +2,30 @@ import type { NS } from "@ns"
 
 // Hacks the server where this script is running.
 export async function main(ns: NS): Promise<void> {
-  let currentMoney = ns.getServerMoneyAvailable()
-  const maxMoney = ns.getServerMaxMoney()
-  const minSecurity = ns.getServerMinSecurityLevel()
-  let currentSecurity = ns.getServerSecurityLevel()
+  const hostname = (ns.args[0] as string) || ns.getHostname()
 
-  const threads = ns.args[0]
-
-  if (typeof threads !== "number" || threads < 1) {
-    throw new Error(`Invalid number of threads: ${threads}`)
-  }
+  let currentMoney = ns.getServerMoneyAvailable(hostname)
+  const maxMoney = ns.getServerMaxMoney(hostname)
+  const minSecurity = ns.getServerMinSecurityLevel(hostname)
+  let currentSecurity = ns.getServerSecurityLevel(hostname)
 
   const ensureMinSecurity = async () => {
     while (currentSecurity > minSecurity) {
-      await ns.weaken(undefined, { threads })
-      currentSecurity = ns.getServerSecurityLevel()
+      await ns.weaken(hostname)
+      currentSecurity = ns.getServerSecurityLevel(hostname)
     }
   }
 
   const ensureMaxMoney = async () => {
     while (currentMoney < maxMoney) {
-      await ns.grow(undefined, { threads })
-      currentMoney = ns.getServerMoneyAvailable()
+      await ns.grow(hostname)
+      currentMoney = ns.getServerMoneyAvailable(hostname)
     }
   }
 
   const hackServer = async () => {
-    await ns.hack(undefined, { threads })
-    currentMoney = ns.getServerMoneyAvailable()
+    await ns.hack(hostname)
+    currentMoney = ns.getServerMoneyAvailable(hostname)
   }
 
   // eslint-disable-next-line no-constant-condition
